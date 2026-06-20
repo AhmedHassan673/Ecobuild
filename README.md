@@ -124,4 +124,4 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ---
 
-<p align="center">Made with 🌱 by <a href="https://github.com/AhmedHassan673">Ahmed Hassan</a></p>
+
