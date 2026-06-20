@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoBuild - Start Building</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Fredoka', sans-serif;
+            /* Vibrant Sky Gradient */
+            background: linear-gradient(180deg, #4facfe 0%, #00f2fe 100%);
+            min-height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden; color: #2d3436;
+        }
+
+        /* Animated Background Elements */
+        .cloud { position: absolute; opacity: 0.8; animation: float 6s ease-in-out infinite; z-index: 0; font-size: 4rem; }
+        .c1 { top: 10%; left: 10%; animation-delay: 0s; }
+        .c2 { top: 20%; right: 15%; animation-delay: 2s; font-size: 6rem; }
+        .c3 { bottom: 15%; left: 20%; animation-delay: 4s; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+
+        .container { position: relative; z-index: 10; text-align: center; width: 90%; max-width: 500px; }
+
+        /* Main Card Style */
+        .game-card {
+            background: #ffffff;
+            border: 4px solid #b2bec3;
+            border-bottom-width: 8px;
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        h1 {
+            font-size: 3.5rem; color: #00b894;
+            text-shadow: 3px 3px 0 #dfe6e9;
+            margin-bottom: 5px; letter-spacing: 1px;
+            -webkit-text-stroke: 1px #006266;
+        }
+
+        .subtitle { font-size: 1.1rem; color: #636e72; margin-bottom: 30px; font-weight: 600; }
+
+        /* Chunky Buttons */
+        .btn {
+            display: block; width: 100%; padding: 15px; margin-bottom: 15px;
+            font-size: 1.2rem; font-weight: 700; text-transform: uppercase;
+            border: none; border-radius: 15px; cursor: pointer;
+            font-family: 'Fredoka', sans-serif; transition: transform 0.1s;
+            color: white; text-shadow: 1px 1px 0 rgba(0,0,0,0.2);
+        }
+        .btn:active { transform: translateY(4px); border-bottom-width: 0 !important; margin-top: 4px; margin-bottom: 11px; }
+
+        .btn-login { background: #0984e3; border-bottom: 5px solid #06528f; }
+        .btn-signup { background: #00b894; border-bottom: 5px solid #006266; }
+        
+        .info-link {
+            color: #0984e3; text-decoration: none; font-weight: bold; font-size: 1.1rem;
+            display: inline-block; margin-top: 10px; cursor: pointer; border-bottom: 2px dashed #0984e3;
+        }
+        .info-link:hover { color: #00b894; border-color: #00b894; }
+
+        /* Modal Styles */
+        .modal {
+            display: none; position: fixed; z-index: 100; left: 0; top: 0;
+            width: 100%; height: 100%; background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background: #f1f2f6; border: 4px solid #747d8c;
+            margin: 5% auto; padding: 30px; border-radius: 20px;
+            width: 90%; max-width: 600px; max-height: 85vh; overflow-y: auto;
+            position: relative; box-shadow: 0 15px 0 rgba(0,0,0,0.2);
+            animation: bounceIn 0.3s;
+        }
+        @keyframes bounceIn { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+        .close { position: absolute; right: 20px; top: 15px; font-size: 30px; cursor: pointer; color: #ff7675; font-weight: bold; }
+        
+        /* Rules Styling */
+        .rules-section h3 { color: #0984e3; margin: 20px 0 10px 0; border-bottom: 2px solid #dfe6e9; padding-bottom: 5px; }
+        .rules-list { list-style: none; text-align: left; }
+        .rules-list li { margin-bottom: 10px; padding-left: 25px; position: relative; line-height: 1.5; color: #555; }
+        .rules-list li::before { content: "✅"; position: absolute; left: 0; top: 2px; font-size: 0.9rem; }
+        
+        /* Form Inputs */
+        input {
+            width: 100%; padding: 15px; margin: 10px 0;
+            border: 3px solid #dfe6e9; border-radius: 12px;
+            font-family: 'Fredoka', sans-serif; font-size: 1rem; background: white;
+        }
+        input:focus { outline: none; border-color: #0984e3; }
+        .message-box { padding: 12px; border-radius: 8px; margin-bottom: 10px; display: none; font-weight: bold; color: white; }
+        .error { background: #ff7675; } .success { background: #00b894; }
+    </style>
+</head>
+<body>
+    <div class="cloud c1">☁️</div>
+    <div class="cloud c2">☀️</div>
+    <div class="cloud c3">🌱</div>
+
+    <div class="container">
+        <div class="game-card">
+            <h1>EcoBuild</h1>
+            <p class="subtitle">Build Your Sustainable City of Tomorrow</p>
+            
+            <button class="btn btn-login" onclick="openModal('loginModal')">Login</button>
+            <button class="btn btn-signup" onclick="location.href='signup.html'">Sign Up</button>
+            
+            <div class="info-link" onclick="openModal('rulesModal')">📖 Game Rules & Guide</div>
+        </div>
+    </div>
+
+    <div id="rulesModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('rulesModal')">&times;</span>
+            <h2 style="color:#2d3436; text-align:center;">About EcoBuild</h2>
+            
+            <div class="rules-section">
+                <p style="text-align: center; margin-bottom: 15px; color: #636e72;">
+                    Balance economic growth with green initiatives. Every decision impacts your city's health!
+                </p>
+
+                <h3>🎮 How to Play</h3>
+                <ul class="rules-list">
+                    <li><strong>Place Buildings:</strong> Click the grid to build structures.</li>
+                    <li><strong>Controls:</strong> Use Arrow Keys (Left/Right) to switch categories.</li>
+                    <li><strong>Save:</strong> Your city must be saved manually via the top menu!</li>
+                </ul>
+
+                <h3>⚔️ Core Mechanics</h3>
+                <ul class="rules-list">
+                    <li><strong>Pollution Control:</strong> Industry creates pollution. Counter it with Parks and filters.</li>
+                    <li><strong>Energy:</strong> Power your city with renewables (Solar, Wind).</li>
+                    <li><strong>Money:</strong> Commercial zones generate income over time.</li>
+                </ul>
+
+                <h3>⚠️ Danger Zones (New!)</h3>
+                <ul class="rules-list">
+                    <li><strong>Decay:</strong> If Pollution > 100, buildings may be abandoned!</li>
+                    <li><strong>Bankruptcy:</strong> If Money < $0, the bank will seize your assets!</li>
+                    <li><strong>Levels:</strong> High Green Score unlocks advanced tech.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="loginModal" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <span class="close" onclick="closeModal('loginModal')">&times;</span>
+            <h2 style="margin-bottom:20px; color:#0984e3;">Mayor Login</h2>
+            <div id="loginMsg" class="message-box"></div>
+            <form onsubmit="handleLogin(event)">
+                <input type="text" id="username" placeholder="Username or Email" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <button type="submit" class="btn btn-login" style="margin-top:20px;">Enter City</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openModal(id) { document.getElementById(id).style.display = 'block'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        window.onclick = function(e) { if(e.target.classList.contains('modal')) e.target.style.display = 'none'; }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const formData = new FormData();
+            formData.append('username', document.getElementById('username').value);
+            formData.append('password', document.getElementById('password').value);
+
+            fetch('php/login.php', { method: 'POST', body: formData })
+            .then(r => r.json())
+            .then(d => {
+                const msg = document.getElementById('loginMsg');
+                if(d.success) {
+                    msg.className = 'message-box success'; msg.textContent = 'Welcome back, Mayor!'; msg.style.display = 'block';
+                    setTimeout(() => window.location.href = 'home.html', 1000);
+                } else {
+                    msg.className = 'message-box error'; msg.textContent = d.message; msg.style.display = 'block';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

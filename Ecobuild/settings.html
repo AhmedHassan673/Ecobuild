@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Settings - EcoBuild</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%);
+            min-height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0;
+        }
+        .card {
+            background: #ffffff; padding: 40px; border-radius: 25px;
+            width: 90%; max-width: 450px; text-align: center; border: 5px solid white;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+        h1 { margin-bottom: 20px; color: #2d3436; }
+        .group {
+            display: flex; justify-content: space-between; align-items: center;
+            background: #f1f2f6; padding: 15px; border-radius: 12px; margin-bottom: 15px;
+        }
+        .btn {
+            width: 100%; padding: 15px; background: #00b894; color: white;
+            border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 1.1rem;
+            border-bottom: 4px solid #006266; margin-top: 10px;
+        }
+        .btn:active { border-bottom: 0; transform: translateY(4px); margin-top: 14px; }
+        .back { display: block; margin-top: 20px; color: #555; text-decoration: none; font-weight: bold; }
+        
+        /* Switch */
+        .switch { position: relative; display: inline-block; width: 50px; height: 28px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: #00b894; }
+        input:checked + .slider:before { transform: translateX(22px); }
+        
+        select { padding: 5px 10px; border-radius: 5px; border: 1px solid #ccc; font-family: 'Fredoka', sans-serif; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>⚙️ Settings</h1>
+        <div id="msg" style="margin-bottom:10px; color:#00b894; display:none; font-weight:bold;">Saved!</div>
+        <form onsubmit="save(event)">
+            <div class="group"><span>Sound FX</span><label class="switch"><input type="checkbox" id="audio"><span class="slider"></span></label></div>
+            <div class="group"><span>Graphics</span><select id="graphics"><option value="low">Low</option><option value="medium">Medium</option></select></div>
+            <div class="group"><span>Difficulty</span><select id="difficulty"><option value="normal">Normal</option><option value="hard">Hard</option></select></div>
+            <button class="btn">Save Changes</button>
+        </form>
+        <a href="home.html" class="back">← Back</a>
+    </div>
+    <script>
+        window.onload=function(){fetch('php/get_settings.php').then(r=>r.json()).then(d=>{if(d.success){
+            document.getElementById('audio').checked=d.settings.audio;
+            document.getElementById('graphics').value=d.settings.graphics;
+            document.getElementById('difficulty').value=d.settings.difficulty;
+        }})}
+        function save(e){e.preventDefault();
+            const fd=new FormData(); fd.append('audio', document.getElementById('audio').checked?1:0);
+            fd.append('graphics', document.getElementById('graphics').value);
+            fd.append('difficulty', document.getElementById('difficulty').value);
+            fetch('php/save_settings.php',{method:'POST',body:fd}).then(r=>r.json()).then(d=>{
+                const m=document.getElementById('msg'); m.style.display='block'; setTimeout(()=>m.style.display='none',2000);
+            });
+        }
+    </script>
+</body>
+</html>

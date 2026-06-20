@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign Up - EcoBuild</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background: linear-gradient(180deg, #4facfe 0%, #00f2fe 100%);
+            min-height: 100vh; display: flex; align-items: center; justify-content: center;
+        }
+        .container { width: 90%; max-width: 450px; text-align: center; }
+        
+        .game-card {
+            background: #ffffff;
+            border: 4px solid #b2bec3; border-bottom-width: 8px;
+            border-radius: 25px; padding: 30px;
+            box-shadow: 0 15px 0 rgba(0,0,0,0.1);
+        }
+
+        h1 { color: #00b894; font-size: 2.5rem; margin-bottom: 20px; }
+
+        input {
+            width: 100%; padding: 15px; margin: 8px 0;
+            border: 3px solid #dfe6e9; border-radius: 12px;
+            font-family: 'Fredoka', sans-serif; font-size: 1rem;
+        }
+        input:focus { outline: none; border-color: #00b894; }
+
+        .btn {
+            width: 100%; padding: 15px; margin-top: 15px;
+            background: #00b894; color: white; border: none; border-radius: 15px;
+            font-size: 1.2rem; font-weight: bold; cursor: pointer;
+            border-bottom: 5px solid #006266; font-family: 'Fredoka', sans-serif;
+        }
+        .btn:active { transform: translateY(4px); border-bottom-width: 0; margin-top: 19px; }
+
+        .link { display: block; margin-top: 20px; color: #636e72; text-decoration: none; font-weight: bold; }
+        .message-box { padding: 12px; margin-bottom: 10px; border-radius: 8px; display: none; color: white; font-weight: bold; }
+        .error { background: #ff7675; } .success { background: #00b894; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="game-card">
+            <h1>New Mayor</h1>
+            <div id="messageBox" class="message-box"></div>
+            <form onsubmit="handleSignup(event)">
+                <input type="text" id="fullName" placeholder="Full Name" required>
+                <input type="text" id="username" placeholder="Username" required>
+                <input type="email" id="email" placeholder="Email" required>
+                <input type="password" id="password" placeholder="Password (min 6 chars)" required>
+                <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+                <button type="submit" class="btn">Start Building</button>
+            </form>
+            <a href="index.html" class="link">← Back to Login</a>
+        </div>
+    </div>
+    <script>
+        function handleSignup(e) {
+            e.preventDefault();
+            const formData = new FormData();
+            ['fullName', 'username', 'email', 'password'].forEach(id => formData.append(id, document.getElementById(id).value));
+            
+            const pwd = document.getElementById('password').value;
+            const confirm = document.getElementById('confirmPassword').value;
+            const msg = document.getElementById('messageBox');
+
+            if(pwd !== confirm) { showMsg("Passwords don't match", false); return; }
+            if(pwd.length < 6) { showMsg("Password too short", false); return; }
+
+            fetch('php/signup.php', { method: 'POST', body: formData })
+            .then(r => r.json())
+            .then(d => {
+                showMsg(d.message, d.success);
+                if(d.success) setTimeout(() => window.location.href='index.html', 2000);
+            });
+
+            function showMsg(text, success) {
+                msg.textContent = text; 
+                msg.className = success ? "message-box success" : "message-box error"; 
+                msg.style.display="block";
+            }
+        }
+    </script>
+</body>
+</html>

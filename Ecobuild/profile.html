@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile - EcoBuild</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%);
+            min-height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container { 
+            width: 100%; 
+            max-width: 500px; 
+        }
+
+        .card {
+            background: #ffffff;
+            border: 4px solid #b2bec3;
+            border-bottom-width: 8px;
+            border-radius: 25px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 15px 0 rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        /* Avatar */
+        .avatar-container {
+            width: 90px; height: 90px; 
+            margin: 0 auto 15px;
+            background: #74b9ff;
+            border: 4px solid #0984e3;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 3rem;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.1);
+        }
+
+        h1 { color: #2d3436; margin-bottom: 5px; font-size: 2rem; }
+        
+        .username-tag { 
+            color: #0984e3; font-weight: bold; margin-bottom: 25px; font-size: 1.1rem;
+            background: #dfe6e9; display: inline-block; padding: 5px 15px; border-radius: 15px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px; text-align: left; margin-bottom: 25px;
+        }
+
+        .stat-box {
+            background: #f1f2f6; padding: 12px; border-radius: 12px; 
+            border: 2px solid #dfe6e9; border-bottom-width: 4px;
+        }
+
+        .label { font-size: 0.8rem; color: #636e72; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; }
+        .val { font-size: 1rem; font-weight: bold; color: #2d3436; word-break: break-all; }
+
+        /* Buttons */
+        .btn {
+            display: block; width: 100%; padding: 12px; border: none; border-radius: 12px;
+            font-family: 'Fredoka', sans-serif; font-weight: bold; font-size: 1.1rem;
+            cursor: pointer; color: white; transition: 0.1s; margin-bottom: 10px;
+        }
+        .btn:active { transform: translateY(4px); border-bottom-width: 0 !important; margin-top: 4px; margin-bottom: 6px; }
+
+        .btn-edit { background: #0984e3; border-bottom: 5px solid #06528f; }
+        .btn-save { background: #00b894; border-bottom: 5px solid #006266; }
+        .btn-cancel { background: #b2bec3; border-bottom: 5px solid #636e72; color: #2d3436; }
+        .btn-back { background: #ff7675; border-bottom: 5px solid #d63031; text-decoration: none; text-align: center; }
+
+        /* Edit Form Section */
+        .edit-section {
+            display: none; text-align: left; background: #f1f2f6;
+            padding: 20px; border-radius: 15px; border: 3px dashed #b2bec3;
+            margin-bottom: 20px; animation: slideDown 0.3s;
+        }
+        @keyframes slideDown { from{opacity:0; transform:translateY(-10px);} to{opacity:1; transform:translateY(0);} }
+
+        input {
+            width: 100%; padding: 12px; margin-bottom: 12px;
+            border: 3px solid #dfe6e9; border-radius: 10px;
+            font-family: 'Fredoka', sans-serif; font-size: 1rem;
+        }
+        input:focus { outline: none; border-color: #0984e3; }
+
+        /* Delete Section */
+        .danger-zone {
+            margin-top: 30px; padding-top: 20px; border-top: 2px dashed #ff7675;
+        }
+        .btn-delete {
+            background: transparent; color: #d63031; border: 3px solid #fab1a0;
+            font-size: 0.9rem; padding: 10px; border-bottom-width: 3px;
+        }
+        .btn-delete:hover { background: #ffeaa7; border-color: #d63031; }
+
+        .message-box { padding: 10px; margin-bottom: 15px; border-radius: 8px; font-weight: bold; color: white; display: none; }
+        .success { background: #00b894; } .error { background: #d63031; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="avatar-container">👷</div>
+            <h1 id="displayName">Loading...</h1>
+            <div class="username-tag">@<span id="displayUsername">...</span></div>
+            
+            <div id="messageBox" class="message-box"></div>
+
+            <div class="stats-grid" id="viewMode">
+                <div class="stat-box"><div class="label">Name</div><div class="val" id="fullName">...</div></div>
+                <div class="stat-box"><div class="label">Email</div><div class="val" id="email">...</div></div>
+                <div class="stat-box"><div class="label">Joined</div><div class="val" id="joined">...</div></div>
+                <div class="stat-box"><div class="label">Last Seen</div><div class="val" id="last">...</div></div>
+            </div>
+
+            <div class="edit-section" id="editMode">
+                <h3 style="margin-bottom:15px; color:#2d3436;">Update Details</h3>
+                <form onsubmit="updateProfile(event)">
+                    <label class="label">New Username</label>
+                    <input type="text" id="newUsername" placeholder="Enter new username">
+                    
+                    <label class="label">New Password</label>
+                    <input type="password" id="newPassword" placeholder="Min 6 characters">
+                    
+                    <label class="label">Confirm Password</label>
+                    <input type="password" id="confirmPassword" placeholder="Re-type password">
+                    
+                    <div style="display:flex; gap:10px;">
+                        <button type="submit" class="btn btn-save">Save</button>
+                        <button type="button" class="btn btn-cancel" onclick="toggleEdit()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="actionButtons">
+                <button class="btn btn-edit" onclick="toggleEdit()">✏️ Edit Profile</button>
+                <a href="home.html" class="btn btn-back">← Back to Menu</a>
+            </div>
+
+            <div class="danger-zone">
+                <button class="btn btn-delete" onclick="deleteAccount()">🗑️ Delete Account</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. Load Data
+        window.onload = function() {
+            fetch('php/get_profile.php').then(r => r.json()).then(d => {
+                if (d.logged_in) {
+                    const u = d.user;
+                    document.getElementById('displayName').textContent = u.full_name;
+                    document.getElementById('displayUsername').textContent = u.username;
+                    document.getElementById('fullName').textContent = u.full_name;
+                    document.getElementById('email').textContent = u.email;
+                    document.getElementById('joined').textContent = new Date(u.created_at).toLocaleDateString();
+                    document.getElementById('last').textContent = u.last_login ? new Date(u.last_login).toLocaleDateString() : 'Now';
+                } else window.location.href = 'index.html';
+            });
+        };
+
+        // 2. Toggle Forms
+        function toggleEdit() {
+            const view = document.getElementById('viewMode');
+            const edit = document.getElementById('editMode');
+            const btns = document.getElementById('actionButtons');
+
+            if (edit.style.display === 'block') {
+                edit.style.display = 'none';
+                view.style.display = 'grid';
+                btns.style.display = 'block';
+            } else {
+                edit.style.display = 'block';
+                view.style.display = 'none';
+                btns.style.display = 'none';
+                // Clear inputs
+                document.getElementById('newUsername').value = '';
+                document.getElementById('newPassword').value = '';
+                document.getElementById('confirmPassword').value = '';
+            }
+        }
+
+        // 3. Update Profile Logic
+        function updateProfile(e) {
+            e.preventDefault();
+            const user = document.getElementById('newUsername').value.trim();
+            const pass = document.getElementById('newPassword').value;
+            const conf = document.getElementById('confirmPassword').value;
+            
+            if (pass && pass !== conf) return showMsg('Passwords do not match', false);
+            if (pass && pass.length < 6) return showMsg('Password too short', false);
+            if (!user && !pass) return showMsg('Nothing to update', false);
+
+            const fd = new FormData();
+            if(user) fd.append('username', user);
+            if(pass) fd.append('password', pass);
+
+            fetch('php/update_profile.php', { method: 'POST', body: fd })
+            .then(r => r.json())
+            .then(d => {
+                showMsg(d.message, d.success);
+                if(d.success) setTimeout(() => location.reload(), 1500);
+            });
+        }
+
+        // 4. Delete Account Logic
+        function deleteAccount() {
+            if(confirm("⚠️ ARE YOU SURE?\n\nThis will permanently delete your city, score, and account data.\nThis cannot be undone!")) {
+                fetch('php/delete_account.php', { method: 'POST' })
+                .then(r => r.json())
+                .then(d => {
+                    if(d.success) {
+                        alert("Account deleted. Goodbye!");
+                        window.location.href = 'index.html';
+                    } else {
+                        alert("Error: " + d.message);
+                    }
+                });
+            }
+        }
+
+        function showMsg(text, success) {
+            const box = document.getElementById('messageBox');
+            box.textContent = text;
+            box.className = success ? 'message-box success' : 'message-box error';
+            box.style.display = 'block';
+            setTimeout(() => box.style.display = 'none', 3000);
+        }
+    </script>
+</body>
+</html>

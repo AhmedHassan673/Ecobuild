@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Leaderboard - EcoBuild</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%);
+            min-height: 100vh; padding: 20px;
+        }
+        .container { max-width: 700px; margin: 0 auto; }
+        
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; color: white; text-shadow: 1px 1px 0 rgba(0,0,0,0.2); }
+        h1 { font-size: 2.5rem; }
+
+        .back-btn {
+            background: white; color: #56ab2f; border: none; padding: 10px 20px;
+            border-radius: 20px; font-weight: bold; cursor: pointer; border-bottom: 3px solid #ccc;
+        }
+        .back-btn:active { transform: translateY(2px); border-bottom: 0; }
+
+        .board {
+            background: #ffffff; border-radius: 20px;
+            padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 5px solid white;
+        }
+        
+        .filters { margin-bottom: 15px; display: flex; gap: 10px; }
+        .filter { background: #dfe6e9; border: none; padding: 8px 15px; border-radius: 10px; cursor: pointer; font-weight: bold; }
+        .filter.active { background: #0984e3; color: white; }
+
+        .row {
+            display: grid; grid-template-columns: 50px 1fr 100px 100px;
+            padding: 15px; margin-bottom: 10px; border-radius: 12px;
+            background: #f1f2f6; align-items: center; font-weight: bold; color: #2d3436;
+        }
+        
+        .row:nth-child(2) { background: #ffeaa7; border: 3px solid #fdcb6e; } /* Gold (index+header) */
+        .row:nth-child(3) { background: #dfe6e9; border: 3px solid #b2bec3; } /* Silver */
+        .row:nth-child(4) { background: #fab1a0; border: 3px solid #e17055; } /* Bronze */
+
+        .score { color: #00b894; }
+        .lvl { color: #0984e3; }
+        .header-row { background: transparent !important; color: #b2bec3; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏆 Top Mayors</h1>
+            <button class="back-btn" onclick="location.href='home.html'">Back</button>
+        </div>
+        
+        <div class="board">
+            <div class="filters">
+                <button class="filter active" onclick="load('score')">Green Score</button>
+                <button class="filter" onclick="load('level')">Highest Level</button>
+                <button class="filter" onclick="load('money')">Richest</button>
+            </div>
+            
+            <div id="boardList">Loading...</div>
+        </div>
+    </div>
+    <script>
+        window.onload = () => load('score');
+        
+        function load(sort) {
+            document.querySelectorAll('.filter').forEach(b => b.classList.remove('active'));
+            event && event.target.classList.add('active');
+            
+            fetch(`php/get_leaderboard.php?sort=${sort}`).then(r=>r.json()).then(data => {
+                const c = document.getElementById('boardList'); c.innerHTML = '';
+                c.innerHTML = `<div class="row header-row"><div>#</div><div>Mayor</div><div>Lvl</div><div>Stat</div></div>`;
+                
+                if(!data.length) { c.innerHTML+='<div style="padding:20px;text-align:center;">No cities yet.</div>'; return; }
+                
+                data.forEach((e, i) => {
+                    let val = sort==='money' ? '$'+parseInt(e.money).toLocaleString() : (sort==='level'?e.city_level:e.green_score);
+                    c.innerHTML += `
+                        <div class="row">
+                            <div>${i+1}</div>
+                            <div>${e.username}</div>
+                            <div class="lvl">Lvl ${e.city_level}</div>
+                            <div class="score">${val}</div>
+                        </div>`;
+                });
+            });
+        }
+    </script>
+</body>
+</html>
